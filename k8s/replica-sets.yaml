@@ -1,0 +1,28 @@
+# apiVersion: apps/v1
+# kind: ReplicaSet
+# metadata:
+#   name: webapp
+#   labels:
+#     app: webapp
+# spec:
+#   replicas: 2
+#   selector:
+#     matchLabels:
+#       app: webapp
+#   template:
+#     metadata:
+#       labels:
+#         app: webapp
+#     spec:
+#       containers:
+#       - name: webapp
+#         image: richardchesterwood/k8s-fleetman-webapp-angular:release0
+#         ports:
+#         - name: http
+#           containerPort:  80
+#           protocol: TCP
+#         resources:
+#           limits:
+#             memory: "128Mi"
+#             cpu: "500m"
+        

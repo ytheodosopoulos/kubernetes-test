@@ -1,0 +1,51 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  mongodb
+  namespace: default
+  labels:
+    app:  mongodb
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app:  mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: mongo:3.6.23
+        volumeMounts:
+          - name:  mongo-persistent-storage
+            mountPath: /data/db
+        resources:
+          limits:
+            memory: "1024Mi"
+            cpu: "500m"
+      volumes:
+        - name:  mongo-persistent-storage
+          persistentVolumeClaim:
+            claimName: mongo-pvc
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fleetman-mongodb
+spec:
+  type: ClusterIP
+  selector:
+    app: mongodb
+  ports:
+  - name: mongoport
+    port: 27017
+    targetPort: 27017

@@ -1,0 +1,171 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  queue
+  namespace: default
+  labels:
+    app:  queue
+spec:
+  selector:
+    matchLabels:
+      app: queue
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app:  queue
+    spec:
+      containers:
+      - name: queue
+        image: richardchesterwood/k8s-fleetman-queue:release2
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        ports:
+          - containerPort: 8161
+            name: admin
+          - containerPort: 61616
+            name: endpoint
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  position-simulator
+  namespace: default
+  labels:
+    app:  position-simulator
+spec:
+  selector:
+    matchLabels:
+      app: position-simulator
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app:  position-simulator
+    spec:
+      containers:
+      - name: position-simulator
+        image: richardchesterwood/k8s-fleetman-position-simulator:release2
+        resources:
+          limits:
+            memory: "1024Mi"
+            cpu: "500m"
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: production-microservice
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  position-tracker
+  namespace: default
+  labels:
+    app:  position-tracker
+spec:
+  selector:
+    matchLabels:
+      app: position-tracker
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app:  position-tracker
+    spec:
+      containers:
+      - name: position-tracker
+        image: richardchesterwood/k8s-fleetman-position-tracker:release3
+        resources:
+          limits:
+            memory: "1024Mi"
+            cpu: "500m"
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: production-microservice
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  api-gateway
+  namespace: default
+  labels:
+    app:  api-gateway
+spec:
+  selector:
+    matchLabels:
+      app: api-gateway
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app:  api-gateway
+    spec:
+      containers:
+      - name: api-gateway
+        image: richardchesterwood/k8s-fleetman-api-gateway:release2
+        resources:
+          limits:
+            memory: "1024Mi"
+            cpu: "500m"
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: production-microservice
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  webapp-angular
+  namespace: default
+  labels:
+    app:  webapp-angular
+spec:
+  selector:
+    matchLabels:
+      app: webapp-angular
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app:  webapp-angular
+    spec:
+      containers:
+      - name: webapp-angular
+        image: richardchesterwood/k8s-fleetman-webapp-angular:release2
+        resources:
+          limits:
+            memory: "1024Mi"
+            cpu: "500m"
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: production-microservice
+      restartPolicy: Always
